@@ -59,8 +59,8 @@ public class CityWeather {
             //doc = Jsoup.connect(link).maxBodySize(0).get();
             
             
-            //System.out.println(doc);
-            Elements elem = doc.getElementsByClass("forecastitems bx-child");
+            System.out.println(doc);
+            Elements elem = doc.getElementsByClass("wind first bx-child");
             System.out.println(elem);
 
         } catch (IOException ex) {
