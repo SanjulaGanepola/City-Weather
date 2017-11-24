@@ -36,60 +36,29 @@ public class CityWeather {
         Scanner s = null;
         try {
             s = new Scanner(f);
+
+            while (s.hasNext()) {
+                String city = s.nextLine();                
+                String link = "https://www.google.ca/search?biw=1196&bih=949&ei=-FAYWujfH8aKjwSo262ICA&q=toronto" + city + "+weather&oq=toronto+weather&gs_l=psy-ab.3..35i39k1l2j0i67k1j0i20i263k1j0l6.18728.20320.0.20448.15.13.0.0.0.0.152.1144.3j7.10.0....0...1c.1.64.psy-ab..5.10.1142...0i131i67k1j0i131k1.0.Y8wOam42qDc";
+                System.out.println(city +": " +findTemp(link));
+                
+            }
+            s.close();
         } catch (FileNotFoundException ex) {
             System.out.println(ex);
         }
 
-        String city = s.nextLine();
-        System.out.println("City: " + city);
-
-        String link = "https://www.theweathernetwork.com/ca/weather/ontario/" + city;
-
-        findTemp(link);
-
     }
 
-    
-    public static int findTemp(String link) {
-
+    public static String findTemp(String link) {
         Document doc = null;
+        String html = null;
         try {
-            doc = Jsoup.connect(link).get();
-            //doc = Jsoup.connect(link).get();
-            //doc = Jsoup.connect(link).maxBodySize(0).get();
-            
-            
-            System.out.println(doc);
-            Elements elem = doc.getElementsByClass("wind first bx-child");
-            System.out.println(elem);
-
+            html = Jsoup.connect(link).get().html();
+            doc = Jsoup.parse(html);
+            return doc.select("span#wob_tm[style]").text();
         } catch (IOException ex) {
-            System.out.println("a");
+            return "Error";
         }
-        return 1;
     }
-
-    /*
-     public static int findTemp1(String link) {
-     URL url = null;
-     InputStream is = null;
-     BufferedReader br;
-     String line;
-
-     try {
-     url = new URL(link);
-     is = url.openStream();  // throws an IOException
-     br = new BufferedReader(new InputStreamReader(is));
-
-     while ((line = br.readLine()) != null) {
-     System.out.println(line);
-     }
-     } catch (MalformedURLException ex) {
-     System.out.println("1");
-     } catch (IOException ex) {
-     System.out.println("2");
-     }
-     return 1;
-     }
-     */
 }
