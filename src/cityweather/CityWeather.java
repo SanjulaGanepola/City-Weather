@@ -49,17 +49,19 @@ public class CityWeather {
 
     }
 
+    
     public static int findTemp(String link) {
 
-        String html = null;
         Document doc = null;
         try {
-            html = Jsoup.connect(link).get().html();
-            doc = Jsoup.parse(html);
-
-            System.out.println(doc);
-            Elements elem = doc.getElementsByClass("temperature-area clearfix");
-            //System.out.println(elem);
+            doc = Jsoup.connect(link).get();
+            //doc = Jsoup.connect(link).get();
+            //doc = Jsoup.connect(link).maxBodySize(0).get();
+            
+            
+            //System.out.println(doc);
+            Elements elem = doc.getElementsByClass("forecastitems bx-child");
+            System.out.println(elem);
 
         } catch (IOException ex) {
             System.out.println("a");
