@@ -30,14 +30,17 @@ import org.jsoup.select.Elements;
  */
 public class CityWeather {
 
+    static File f = new File("cities.txt");
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         while (true) {
 
-            System.out.println("1) Current");
-            System.out.println("2) Update");
+            System.out.println("1) Current Weather");
+            System.out.println("2) Update Cities");
+            System.out.println("3) Add City");
             Scanner s = new Scanner(System.in);
 
             int choice = s.nextInt();
@@ -54,13 +57,15 @@ public class CityWeather {
                 case 2:
                     update();
                     break;
+                case 3:
+                    add();
+                    break;
             }
         }
     }
 
     public static ArrayList currentData() {
 
-        File f = new File("cities.txt");
         ArrayList<ArrayList<String>> current = new ArrayList<ArrayList<String>>();
         //name
         current.add(new ArrayList<String>());
@@ -83,21 +88,19 @@ public class CityWeather {
     }
 
     public static void update() {
-
         ArrayList<ArrayList<String>> current = currentData();
-        File f = new File("cities.txt");
         PrintWriter pw = null;
 
         try {
             pw = new PrintWriter(new FileWriter(f, false));
             for (int i = 0; i < current.get(0).size(); i++) {
-                String newTemp = findTemp("https://www.google.ca/search?biw=1196&bih=949&ei=-FAYWujfH8aKjwSo262ICA&q=toronto" + current.get(0).get(i) + "+weather&oq=toronto+weather&gs_l=psy-ab.3..35i39k1l2j0i67k1j0i20i263k1j0l6.18728.20320.0.20448.15.13.0.0.0.0.152.1144.3j7.10.0....0...1c.1.64.psy-ab..5.10.1142...0i131i67k1j0i131k1.0.Y8wOam42qDc");
-                    current.get(1).set(i, newTemp);
+                String newTemp = findTemp("https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather");
+                current.get(1).set(i, newTemp);
             }
-            
+
             for (int i = 0; i < current.get(0).size(); i++) {
-                pw.println(current.get(0).get(i) + ","+current.get(1).get(i));
-                
+                pw.println(current.get(0).get(i) + "," + current.get(1).get(i));
+
             }
             pw.close();
 
@@ -116,5 +119,32 @@ public class CityWeather {
         } catch (IOException ex) {
             return "Error";
         }
+    }
+
+    public static void add() {
+        Scanner s = new Scanner(System.in);
+        String newCity = s.nextLine();
+        String[] words = newCity.split(" ");
+        String split = "";
+        if (words.length > 1) {
+            for (int i = 0; i < words.length; i++) {
+                split += words[i] + "+";
+            }
+            split = split.substring(0, newCity.length());
+        } else {
+            split = newCity;
+        }
+
+        try {
+            PrintWriter pw = new PrintWriter(new FileWriter(f, true));
+            //pw.append(System.getProperty("line.separator"));
+            pw.print("\n");
+            pw.print(newCity + "," + findTemp("https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + split + "+weather"));
+
+            pw.close();
+        } catch (IOException ex) {
+            System.out.println("Error");
+        }
+
     }
 }

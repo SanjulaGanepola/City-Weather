@@ -1,3 +1,5 @@
-Toronto
-Newmarket
-Markham
+Toronto,8
+Newmarket,8
+Markham,8
+Scarbrough,8
+Quebec,6
