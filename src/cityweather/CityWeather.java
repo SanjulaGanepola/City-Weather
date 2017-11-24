@@ -38,14 +38,13 @@ public class CityWeather {
             s = new Scanner(f);
 
             while (s.hasNext()) {
-                String city = s.nextLine();                
+                String city = s.nextLine();
                 String link = "https://www.google.ca/search?biw=1196&bih=949&ei=-FAYWujfH8aKjwSo262ICA&q=toronto" + city + "+weather&oq=toronto+weather&gs_l=psy-ab.3..35i39k1l2j0i67k1j0i20i263k1j0l6.18728.20320.0.20448.15.13.0.0.0.0.152.1144.3j7.10.0....0...1c.1.64.psy-ab..5.10.1142...0i131i67k1j0i131k1.0.Y8wOam42qDc";
-                System.out.println(city +": " +findTemp(link));
-                
+                System.out.println(city + ": " + findTemp(link)+"\u2103");                
             }
             s.close();
-        } catch (FileNotFoundException ex) {
-            System.out.println(ex);
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
         }
 
     }
