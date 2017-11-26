@@ -5,6 +5,7 @@
  */
 package cityweather;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -37,7 +38,7 @@ public class Weather extends javax.swing.JFrame {
     public void refreshTable() {
         ArrayList<ArrayList<String>> current = currentData();
         for (int i = 0; i < current.get(0).size(); i++) {
-            model.addRow(new Object[]{current.get(0).get(i), current.get(1).get(i), "a", "b"});
+            model.addRow(new Object[]{current.get(0).get(i), current.get(1).get(i) + "\u2103", current.get(2).get(i), current.get(3).get(i), current.get(4).get(i)});
         }
     }
 
@@ -47,6 +48,13 @@ public class Weather extends javax.swing.JFrame {
         current.add(new ArrayList<String>());
         //temp
         current.add(new ArrayList<String>());
+        //Precipitation
+        current.add(new ArrayList<String>());
+        //Humidity
+        current.add(new ArrayList<String>());
+        //Wind
+        current.add(new ArrayList<String>());
+
         Scanner s = null;
         try {
             s = new Scanner(f);
@@ -55,6 +63,9 @@ public class Weather extends javax.swing.JFrame {
                 String info[] = s.nextLine().split(",");
                 current.get(0).add(info[0]);
                 current.get(1).add(info[1]);
+                current.get(2).add(info[2]);
+                current.get(3).add(info[3]);
+                current.get(4).add(info[4]);
             }
             s.close();
         } catch (FileNotFoundException e) {
@@ -68,7 +79,7 @@ public class Weather extends javax.swing.JFrame {
         PrintWriter pw = null;
 
         try {
-            pw = new PrintWriter(new FileWriter(f, false));
+            pw = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
             for (int i = 0; i < current.get(0).size(); i++) {
                 String newTemp = findTemp("https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather");
                 current.get(1).set(i, newTemp);
@@ -97,12 +108,47 @@ public class Weather extends javax.swing.JFrame {
         }
     }
 
+    public String findPrecipitation(String link) {
+        Document doc = null;
+        String html = null;
+        try {
+            html = Jsoup.connect(link).get().html();
+            doc = Jsoup.parse(html);
+            return doc.select("span#wob_pp").text();
+        } catch (IOException ex) {
+            return "Error";
+        }
+    }
+
+    public String findHumidity(String link) {
+        Document doc = null;
+        String html = null;
+        try {
+            html = Jsoup.connect(link).get().html();
+            doc = Jsoup.parse(html);
+            return doc.select("span#wob_hm").text();
+        } catch (IOException ex) {
+            return "Error";
+        }
+    }
+
+    public String findWind(String link) {
+        Document doc = null;
+        String html = null;
+        try {
+            html = Jsoup.connect(link).get().html();
+            doc = Jsoup.parse(html);
+            return doc.select("span#wob_ws").text();
+        } catch (IOException ex) {
+            return "Error";
+        }
+    }
+
     public void add(String newCity, String link) {
         try {
-            PrintWriter pw = new PrintWriter(new FileWriter(f, true));
+            PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("cities.txt", true)));
             //pw.append(System.getProperty("line.separator"));
-            pw.print("\n");
-            pw.print(newCity + "," + findTemp(link));
+            pw.println(newCity + "," + findTemp(link) + "," + findPrecipitation(link) + "," + findHumidity(link) + "," + findWind(link));
             pw.close();
         } catch (IOException ex) {
             System.out.println("Error");
@@ -136,12 +182,12 @@ public class Weather extends javax.swing.JFrame {
         } catch (IOException ex) {
             System.out.println("Error");
         }
-        
-        System.out.println("1)"+splitCompare[0]);
-        System.out.println("2)"+newCity);
+
+        System.out.println("1)" + splitCompare[0]);
+        System.out.println("2)" + newCity);
 
         if (splitCompare[0].equalsIgnoreCase(newCity)) {
-            add(newCity, link);
+            add(splitCompare[0], link);
         } else {
             jTextField1.setText("");
             System.out.println("Error");
@@ -167,8 +213,6 @@ public class Weather extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jTextField2 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -198,14 +242,14 @@ public class Weather extends javax.swing.JFrame {
             jTable1.getColumnModel().getColumn(4).setResizable(false);
         }
 
-        jButton1.setText("UPDATE");
+        jButton1.setText("UPDATE DATA");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("ADD");
+        jButton2.setText("ADD →");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -216,7 +260,7 @@ public class Weather extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Weather Information");
 
-        jButton3.setText("FILTER");
+        jButton3.setText("FILTER →");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -225,10 +269,6 @@ public class Weather extends javax.swing.JFrame {
 
         jLabel2.setText("City:");
 
-        jLabel3.setText("Province");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "PE", "QC", "SK", "YT" }));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -236,26 +276,20 @@ public class Weather extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton1)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -270,15 +304,10 @@ public class Weather extends javax.swing.JFrame {
                     .addComponent(jButton2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
                     .addComponent(jButton3)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16))
+                .addGap(10, 10, 10))
         );
 
         pack();
@@ -361,10 +390,8 @@ public class Weather extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;

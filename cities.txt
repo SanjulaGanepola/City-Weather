@@ -1,5 +1,6 @@
-Toronto,6
-Newmarket,3
-Markham,5
-Scarbrough,6
-Quebec,6
+Toronto,10,86,80,14
+Newmarket,3,95%,80%,14 km/h
+Toronto,6,68%,69%,14 km/h
+Toronto,6,68%,69%,14 km/h
+Newmarket,3,95%,80%,14 km/h
+East Gwillimbury,3,95%,80%,13 km/h
