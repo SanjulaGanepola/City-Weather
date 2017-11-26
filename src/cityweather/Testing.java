@@ -19,7 +19,7 @@ import org.jsoup.nodes.Document;
  *
  * @author Sanjula Ganepola
  */
-public class CityWeather {
+public class Testing {
 
     static File f = new File("cities.txt");
 

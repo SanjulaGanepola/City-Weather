@@ -1,6 +1,6 @@
-Toronto,10,86,80,14
 Newmarket,3,95%,80%,14 km/h
-Toronto,6,68%,69%,14 km/h
 Toronto,6,68%,69%,14 km/h
 Newmarket,3,95%,80%,14 km/h
 East Gwillimbury,3,95%,80%,13 km/h
+Aurora,3,77%,81%,16 km/h
+Ajax,5,76%,72%,16 km/h
