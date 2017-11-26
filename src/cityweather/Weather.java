@@ -5,6 +5,7 @@
  */
 package cityweather;
 
+import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +14,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -21,10 +27,12 @@ import org.jsoup.nodes.Document;
  *
  * @author Rohitha
  */
-public class Weather extends javax.swing.JFrame {
+public class Weather extends javax.swing.JFrame implements DocumentListener {
 
     static File f = new File("cities.txt");
     DefaultTableModel model;
+
+    TableRowSorter<TableModel> rowSorter = null;
 
     /**
      * Creates new form Weather
@@ -33,6 +41,11 @@ public class Weather extends javax.swing.JFrame {
         initComponents();
         model = (DefaultTableModel) jTable1.getModel();
         refreshTable();
+
+        rowSorter = new TableRowSorter<>(jTable1.getModel());
+        jTable1.setRowSorter(rowSorter);
+        
+        jTextField2.getDocument().addDocumentListener(this);
     }
 
     public void refreshTable() {
@@ -88,7 +101,7 @@ public class Weather extends javax.swing.JFrame {
             }
 
             for (int i = 0; i < current.get(0).size(); i++) {
-                pw.println(current.get(0).get(i) + "," + current.get(1).get(i)+ "," + current.get(2).get(i)+ "," + current.get(3).get(i)+ "," + current.get(4).get(i));
+                pw.println(current.get(0).get(i) + "," + current.get(1).get(i) + "," + current.get(2).get(i) + "," + current.get(3).get(i) + "," + current.get(4).get(i));
 
             }
             pw.close();
@@ -147,7 +160,6 @@ public class Weather extends javax.swing.JFrame {
         } catch (IOException ex) {
             System.out.println("Error");
         }
-
 
         if (splitCompare[0].equalsIgnoreCase(newCity)) {
             add(splitCompare[0], link);
@@ -360,4 +372,33 @@ public class Weather extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        String text = jTextField2.getText();
+        System.out.println(text);
+
+        if (text.trim().length() == 0) {
+            rowSorter.setRowFilter(null);
+        } else {
+            rowSorter.setRowFilter(RowFilter.regexFilter(text));
+        }
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        String text = jTextField2.getText();
+        System.out.println(text);
+
+        if (text.trim().length() == 0) {
+            rowSorter.setRowFilter(null);
+        } else {
+            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+        }
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
