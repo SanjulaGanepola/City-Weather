@@ -79,14 +79,16 @@ public class Weather extends javax.swing.JFrame {
         PrintWriter pw = null;
 
         try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
+            pw = new PrintWriter(new BufferedWriter(new FileWriter(f, false)));
             for (int i = 0; i < current.get(0).size(); i++) {
-                String newTemp = find("span#wob_tm[style]", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather");
-                current.get(1).set(i, newTemp);
+                current.get(1).set(i, find("span#wob_tm[style]", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
+                current.get(2).set(i, find("span#wob_pp", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
+                current.get(3).set(i, find("span#wob_hm", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
+                current.get(4).set(i, find("span#wob_ws", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
             }
 
             for (int i = 0; i < current.get(0).size(); i++) {
-                pw.println(current.get(0).get(i) + "," + current.get(1).get(i));
+                pw.println(current.get(0).get(i) + "," + current.get(1).get(i)+ "," + current.get(2).get(i)+ "," + current.get(3).get(i)+ "," + current.get(4).get(i));
 
             }
             pw.close();
@@ -142,13 +144,10 @@ public class Weather extends javax.swing.JFrame {
             doc = Jsoup.parse(html);
             String compare = doc.select("div#wob_loc").text();
             splitCompare = compare.split(",");
-            System.out.println(splitCompare[0]);
         } catch (IOException ex) {
             System.out.println("Error");
         }
 
-        System.out.println("1)" + splitCompare[0]);
-        System.out.println("2)" + newCity);
 
         if (splitCompare[0].equalsIgnoreCase(newCity)) {
             add(splitCompare[0], link);

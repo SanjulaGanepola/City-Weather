@@ -1,7 +1,6 @@
-Newmarket,3,95%,80%,14 km/h
-Toronto,6,68%,69%,14 km/h
-Newmarket,3,95%,80%,14 km/h
-East Gwillimbury,3,95%,80%,13 km/h
-Aurora,3,77%,81%,16 km/h
-Ajax,5,76%,72%,16 km/h
-Ottawa,4,82%,78%,10 km/h
+Newmarket,3,86%,81%,16 km/h
+Toronto,6,92%,71%,19 km/h
+Ajax,4,86%,73%,16 km/h
+Aurora,3,81%,81%,16 km/h
+East Gwillimbury,3,93%,81%,14 km/h
+Ottawa,3,82%,77%,10 km/h
