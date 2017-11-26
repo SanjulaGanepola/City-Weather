@@ -81,7 +81,7 @@ public class Weather extends javax.swing.JFrame {
         try {
             pw = new PrintWriter(new BufferedWriter(new FileWriter(f, true)));
             for (int i = 0; i < current.get(0).size(); i++) {
-                String newTemp = findTemp("https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather");
+                String newTemp = find("span#wob_tm[style]", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather");
                 current.get(1).set(i, newTemp);
             }
 
@@ -96,49 +96,13 @@ public class Weather extends javax.swing.JFrame {
         }
     }
 
-    public String findTemp(String link) {
+    public String find(String location, String link) {
         Document doc = null;
         String html = null;
         try {
             html = Jsoup.connect(link).get().html();
             doc = Jsoup.parse(html);
-            return doc.select("span#wob_tm[style]").text();
-        } catch (IOException ex) {
-            return "Error";
-        }
-    }
-
-    public String findPrecipitation(String link) {
-        Document doc = null;
-        String html = null;
-        try {
-            html = Jsoup.connect(link).get().html();
-            doc = Jsoup.parse(html);
-            return doc.select("span#wob_pp").text();
-        } catch (IOException ex) {
-            return "Error";
-        }
-    }
-
-    public String findHumidity(String link) {
-        Document doc = null;
-        String html = null;
-        try {
-            html = Jsoup.connect(link).get().html();
-            doc = Jsoup.parse(html);
-            return doc.select("span#wob_hm").text();
-        } catch (IOException ex) {
-            return "Error";
-        }
-    }
-
-    public String findWind(String link) {
-        Document doc = null;
-        String html = null;
-        try {
-            html = Jsoup.connect(link).get().html();
-            doc = Jsoup.parse(html);
-            return doc.select("span#wob_ws").text();
+            return doc.select(location).text();
         } catch (IOException ex) {
             return "Error";
         }
@@ -148,7 +112,7 @@ public class Weather extends javax.swing.JFrame {
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("cities.txt", true)));
             //pw.append(System.getProperty("line.separator"));
-            pw.println(newCity + "," + findTemp(link) + "," + findPrecipitation(link) + "," + findHumidity(link) + "," + findWind(link));
+            pw.println(newCity + "," + find("span#wob_tm[style]", link) + "," + find("span#wob_pp", link) + "," + find("span#wob_hm", link) + "," + find("span#wob_ws", link));
             pw.close();
         } catch (IOException ex) {
             System.out.println("Error");
