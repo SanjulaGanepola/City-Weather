@@ -190,6 +190,7 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
         jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
