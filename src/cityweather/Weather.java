@@ -5,7 +5,6 @@
  */
 package cityweather;
 
-import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,7 +24,7 @@ import org.jsoup.nodes.Document;
 
 /**
  *
- * @author Rohitha
+ * @author Sanjula
  */
 public class Weather extends javax.swing.JFrame implements DocumentListener {
 
@@ -33,6 +32,9 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
     DefaultTableModel model;
 
     TableRowSorter<TableModel> rowSorter = null;
+    
+    //Helper class for changing from file to array and array to file
+    FileArrayManipulation access = new FileArrayManipulation();
 
     /**
      * Creates new form Weather
@@ -50,46 +52,15 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
     }
 
     public void refreshTable() {
-        ArrayList<ArrayList<String>> current = currentData();
+        model.setRowCount(0);
+        ArrayList<ArrayList<String>> current = access.fileToArray("cities.txt");
         for (int i = 0; i < current.get(0).size(); i++) {
             model.addRow(new Object[]{current.get(0).get(i), current.get(1).get(i) + "\u2103", current.get(2).get(i), current.get(3).get(i), current.get(4).get(i)});
         }
     }
 
-    public ArrayList currentData() {
-        ArrayList<ArrayList<String>> current = new ArrayList<ArrayList<String>>();
-        //name
-        current.add(new ArrayList<String>());
-        //temp
-        current.add(new ArrayList<String>());
-        //Precipitation
-        current.add(new ArrayList<String>());
-        //Humidity
-        current.add(new ArrayList<String>());
-        //Wind
-        current.add(new ArrayList<String>());
-
-        Scanner s = null;
-        try {
-            s = new Scanner(f);
-
-            while (s.hasNext()) {
-                String info[] = s.nextLine().split(",");
-                current.get(0).add(info[0]);
-                current.get(1).add(info[1]);
-                current.get(2).add(info[2]);
-                current.get(3).add(info[3]);
-                current.get(4).add(info[4]);
-            }
-            s.close();
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-        }
-        return current;
-    }
-
     public void update() {
-        ArrayList<ArrayList<String>> current = currentData();
+        ArrayList<ArrayList<String>> current = access.fileToArray("cities.txt");
         PrintWriter pw = null;
 
         try {
@@ -127,8 +98,8 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
     public void add(String newCity, String link) {
         try {
             PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter("cities.txt", true)));
-            //pw.append(System.getProperty("line.separator"));
-            pw.println(newCity + "," + find("span#wob_tm[style]", link) + "," + find("span#wob_pp", link) + "," + find("span#wob_hm", link) + "," + find("span#wob_ws", link));
+            System.out.println(find("div.today_nowcard-temp", link));
+            //pw.println(newCity + "," + find("span#wob_tm[style]", link) + "," + find("span#wob_pp", link) + "," + find("span#wob_hm", link) + "," + find("span#wob_ws", link));
             pw.close();
         } catch (IOException ex) {
             System.out.println("Error");
@@ -147,14 +118,14 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
             split = newCity;
         }
 
-        String link = "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + split + "+weather";
+        String googleLink = "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + split + "+weather";
 
         Document doc = null;
         String html = null;
         String[] splitCompare = null;
 
         try {
-            html = Jsoup.connect(link).get().html();
+            html = Jsoup.connect(googleLink).get().html();
             doc = Jsoup.parse(html);
             String compare = doc.select("div#wob_loc").text();
             splitCompare = compare.split(",");
@@ -163,7 +134,11 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
         }
 
         if (splitCompare[0].equalsIgnoreCase(newCity)) {
-            add(splitCompare[0], link);
+            String weatherChannel = doc.select("td._Hif > a").get(0).attr("href");
+            String build = "https://weather.com/en-CA/weather/today/" + weatherChannel.substring(24) + "," + weatherChannel.substring(24);
+            System.out.println(build);
+            System.out.println(weatherChannel);
+            add(splitCompare[0], weatherChannel);
         } else {
             jTextField1.setText("");
             System.out.println("Error");
@@ -289,7 +264,6 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         validateCity(jTextField1.getText());
-        model.setRowCount(0);
         refreshTable();
     }//GEN-LAST:event_jButton2ActionPerformed
 
@@ -301,7 +275,6 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         update();
-        model.setRowCount(0);
         refreshTable();
     }//GEN-LAST:event_jButton1ActionPerformed
 

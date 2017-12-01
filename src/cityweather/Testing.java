@@ -77,6 +77,45 @@ public class Testing {
         }
         return current;
     }
+    
+    /*Previously in the weather class
+        public ArrayList currentData() {
+        ArrayList<ArrayList<String>> current = new ArrayList<ArrayList<String>>();
+
+        FileArrayManipulation access = new FileArrayManipulation();
+
+        access.fileToArray("cities.txt");
+
+        //name
+        current.add(new ArrayList<String>());
+        //temp
+        current.add(new ArrayList<String>());
+        //Precipitation
+        current.add(new ArrayList<String>());
+        //Humidity
+        current.add(new ArrayList<String>());
+        //Wind
+        current.add(new ArrayList<String>());
+
+        Scanner s = null;
+        try {
+            s = new Scanner(f);
+
+            while (s.hasNext()) {
+                String info[] = s.nextLine().split(",");
+                current.get(0).add(info[0]);
+                current.get(1).add(info[1]);
+                current.get(2).add(info[2]);
+                current.get(3).add(info[3]);
+                current.get(4).add(info[4]);
+            }
+            s.close();
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        }
+        return current;
+    }
+    */
 
     public static void update() {
         ArrayList<ArrayList<String>> current = currentData();
@@ -136,6 +175,5 @@ public class Testing {
         } catch (IOException ex) {
             System.out.println("Error");
         }
-
     }
 }
