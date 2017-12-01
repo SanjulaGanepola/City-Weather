@@ -32,9 +32,9 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
     DefaultTableModel model;
 
     TableRowSorter<TableModel> rowSorter = null;
-    
+
     //Helper class for changing from file to array and array to file
-    FileArrayManipulation access = new FileArrayManipulation();
+    FileArrayListManipulation access = new FileArrayListManipulation();
 
     /**
      * Creates new form Weather
@@ -53,34 +53,26 @@ public class Weather extends javax.swing.JFrame implements DocumentListener {
 
     public void refreshTable() {
         model.setRowCount(0);
-        ArrayList<ArrayList<String>> current = access.fileToArray("cities.txt");
+        ArrayList<ArrayList<String>> current = access.fileToArrayList("cities.txt");
         for (int i = 0; i < current.get(0).size(); i++) {
             model.addRow(new Object[]{current.get(0).get(i), current.get(1).get(i) + "\u2103", current.get(2).get(i), current.get(3).get(i), current.get(4).get(i)});
         }
     }
 
     public void update() {
-        ArrayList<ArrayList<String>> current = access.fileToArray("cities.txt");
-        PrintWriter pw = null;
-
-        try {
-            pw = new PrintWriter(new BufferedWriter(new FileWriter(f, false)));
-            for (int i = 0; i < current.get(0).size(); i++) {
-                current.get(1).set(i, find("span#wob_tm[style]", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
-                current.get(2).set(i, find("span#wob_pp", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
-                current.get(3).set(i, find("span#wob_hm", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
-                current.get(4).set(i, find("span#wob_ws", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
-            }
-
-            for (int i = 0; i < current.get(0).size(); i++) {
-                pw.println(current.get(0).get(i) + "," + current.get(1).get(i) + "," + current.get(2).get(i) + "," + current.get(3).get(i) + "," + current.get(4).get(i));
-
-            }
-            pw.close();
-
-        } catch (IOException ex) {
-            System.out.println("Error");
+        ArrayList<ArrayList<String>> current = access.fileToArrayList("cities.txt");
+        for (int i = 0; i < current.get(0).size(); i++) {
+            //Update temp
+            current.get(1).set(i, find("span#wob_tm[style]", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
+            //Update precipitation
+            current.get(2).set(i, find("span#wob_pp", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
+            //Update humidity
+            current.get(3).set(i, find("span#wob_hm", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
+            //Update wind
+            current.get(4).set(i, find("span#wob_ws", "https://www.google.ca/search?ei=HqAYWsb6E6e_jwSonZaIBQ&q=" + current.get(0).get(i) + "+weather"));
         }
+
+        access.arrayListToFile(current);
     }
 
     public String find(String location, String link) {
