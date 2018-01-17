@@ -1,0 +1,4 @@
+Temperature,"id=\"wob_tm\" style=\"display:inline\">","</span>"
+Humidity,<span id="wob_hm">,</span>
+Precipitation,<span id="wob_pp">,</span>
+Wind,<span class="wob_t" id="wob_ws">,</span>
